@@ -8,21 +8,66 @@ export default class Player {
   speed: number;
   RAYONPLAYER: number = VariableGlobal.player.RAYONPLAYER;
   constructor(numberPlayer: number) {
-    this.angle = 0;
+    this.angle = Math.PI / 3;
     this.speed = 0;
     this.player = numberPlayer;
   }
+  // calculer position en function de l'angle
+  public avancer(): void {
+    console.log(Math.sin(this.angle), "arriver");
+    this.Position.x = this.Position.x + this.RAYONPLAYER * Math.cos(this.angle);
+    this.Position.y = this.Position.y + this.RAYONPLAYER * Math.sin(this.angle);
 
-  public cerclePlayer(): Cercle {
-    return {
-      x: this.Position.x,
-      y: this.Position.y,
-      r: this.RAYONPLAYER,
-      ai: 0,
-      af: Math.PI * 2,
-    };
+    if (this.collisionBordure()) {
+      this.angle = this.angle + Math.PI;
+      this.collisionBordurePosition();
+    }
   }
 
+  //gerer les collisions avec les bordures
+  public collisionBordure(): boolean {
+    if (
+      this.Position.x + this.RAYONPLAYER >=
+        VariableGlobal.terrain.width - VariableGlobal.terrain.border ||
+      this.Position.x - this.RAYONPLAYER <= VariableGlobal.terrain.border ||
+      this.Position.y - this.RAYONPLAYER <= VariableGlobal.terrain.border ||
+      this.Position.y + this.RAYONPLAYER >=
+        VariableGlobal.terrain.height - VariableGlobal.terrain.border
+    ) {
+      return true;
+    }
+    return false;
+  }
+  // calculer position quand collision border
+  private collisionBordurePosition(): void {
+    if (
+      this.Position.x + this.RAYONPLAYER >=
+      VariableGlobal.terrain.width - VariableGlobal.terrain.border
+    ) {
+      this.Position.x =
+        VariableGlobal.terrain.width -
+        VariableGlobal.terrain.border -
+        this.RAYONPLAYER;
+    } else if (
+      this.Position.x - this.RAYONPLAYER <=
+      VariableGlobal.terrain.border
+    ) {
+      this.Position.x = VariableGlobal.terrain.border + this.RAYONPLAYER;
+    } else if (
+      this.Position.y - this.RAYONPLAYER <=
+      VariableGlobal.terrain.border
+    ) {
+      this.Position.y = VariableGlobal.terrain.border + this.RAYONPLAYER;
+    } else if (
+      this.Position.y + this.RAYONPLAYER >=
+      VariableGlobal.terrain.height - VariableGlobal.terrain.border
+    ) {
+      this.Position.y =
+        VariableGlobal.terrain.height -
+        VariableGlobal.terrain.border -
+        this.RAYONPLAYER;
+    }
+  }
   //getter setter
   public getPosition(): { x: number; y: number } {
     return this.Position;
@@ -41,5 +86,11 @@ export default class Player {
   }
   public setSpeed(speed: number): void {
     this.speed = speed;
+  }
+  public getPlayer(): number {
+    return this.player;
+  }
+  public getRayonPlayer(): number {
+    return this.RAYONPLAYER;
   }
 }

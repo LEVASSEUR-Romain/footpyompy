@@ -3,6 +3,9 @@ const variableGlobal = {
         RAYONPLAYER: 15,
     },
     terrain: {
+        width: 800,
+        height: 600,
+        border: 50,
         POURCENTAGEGLOBALGOAL: 20,
     },
     ballon: {

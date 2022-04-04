@@ -1,13 +1,12 @@
 import VariableGlobal from "./VariableGlobal.js";
 export default class Terrain {
-    constructor(width, height, border) {
+    constructor() {
         this.POURCENTAGEGLOBALGOAL = VariableGlobal.terrain.POURCENTAGEGLOBALGOAL;
-        this.width = width;
-        this.height = height;
-        this.border = border;
+        this.width = VariableGlobal.terrain.width;
+        this.height = VariableGlobal.terrain.height;
+        this.border = VariableGlobal.terrain.border;
     }
     dimensionGoalPlayer1() {
-        console.log(this.height / 2 - this.width * (this.POURCENTAGEGLOBALGOAL / 100));
         return {
             x: this.getBorder() / 2,
             y: this.height / 2 - (this.width * (this.POURCENTAGEGLOBALGOAL / 100)) / 2,

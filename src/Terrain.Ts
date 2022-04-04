@@ -5,16 +5,13 @@ export default class Terrain {
   height: number;
   border: number;
   POURCENTAGEGLOBALGOAL: number = VariableGlobal.terrain.POURCENTAGEGLOBALGOAL;
-  constructor(width: number, height: number, border: number) {
-    this.width = width;
-    this.height = height;
-    this.border = border;
+  constructor() {
+    this.width = VariableGlobal.terrain.width;
+    this.height = VariableGlobal.terrain.height;
+    this.border = VariableGlobal.terrain.border;
   }
 
   public dimensionGoalPlayer1(): Rectangle {
-    console.log(
-      this.height / 2 - this.width * (this.POURCENTAGEGLOBALGOAL / 100)
-    );
     return {
       x: this.getBorder() / 2,
       y:
