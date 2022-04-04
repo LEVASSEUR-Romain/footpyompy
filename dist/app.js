@@ -1,22 +1,16 @@
 import Player from "./Player.js";
-import Terrain from "./Terrain.js";
+import InitialisationPartie from "./InitialisationPartie.js";
 import VariableGlobal from "./VariableGlobal.js";
 import Ballon from "./Ballon.js";
+import Game from "./Game.js";
 //players
-const Players = [
-    new Player(1),
-    new Player(2),
-    new Player(3),
-    new Player(4),
-    new Player(5),
-    new Player(6),
-];
+const Players = [new Player(1), new Player(4)];
+const game = new Game(Players);
 // terrain border
-const terrain = new Terrain();
+const initialisation = new InitialisationPartie();
 //position depart
 for (let i = 0; i < Players.length; i++) {
-    //position player
-    Players[i].setPosition(terrain.positionPlayerStart(Players[i].getPlayer()));
+    Players[i].setPosition(initialisation.positionPlayerStart(Players[i].player).x, initialisation.positionPlayerStart(Players[i].player).y);
 }
 // ballon
 const ballon = new Ballon();
@@ -25,16 +19,16 @@ const canvasterrain = document.querySelector(".terrain");
 const ctx = canvasterrain.getContext("2d");
 //dessiner le terrain
 const drawTerrain = () => {
-    canvasterrain.width = terrain.getWidth();
-    canvasterrain.height = terrain.getHeight();
+    canvasterrain.width = initialisation.width;
+    canvasterrain.height = initialisation.height;
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, terrain.width, terrain.height);
+    ctx.fillRect(0, 0, initialisation.width, initialisation.height);
     ctx.fillStyle = "green";
-    ctx.fillRect(terrain.dimensionBorder().x, terrain.dimensionBorder().y, terrain.dimensionBorder().w, terrain.dimensionBorder().h);
+    ctx.fillRect(initialisation.dimensionBorder().x, initialisation.dimensionBorder().y, initialisation.dimensionBorder().w, initialisation.dimensionBorder().h);
     //draw goal
     ctx.fillStyle = "red";
-    ctx.fillRect(terrain.dimensionGoalPlayer1().x, terrain.dimensionGoalPlayer1().y, terrain.dimensionGoalPlayer1().w, terrain.dimensionGoalPlayer1().h);
-    ctx.fillRect(terrain.dimensionGoalPlayer2().x, terrain.dimensionGoalPlayer2().y, terrain.dimensionGoalPlayer2().w, terrain.dimensionGoalPlayer2().h);
+    ctx.fillRect(initialisation.dimensionGoalPlayer1().x, initialisation.dimensionGoalPlayer1().y, initialisation.dimensionGoalPlayer1().w, initialisation.dimensionGoalPlayer1().h);
+    ctx.fillRect(initialisation.dimensionGoalPlayer2().x, initialisation.dimensionGoalPlayer2().y, initialisation.dimensionGoalPlayer2().w, initialisation.dimensionGoalPlayer2().h);
 };
 const drawPlayer = (numeroPlayer, color) => {
     ctx.beginPath();
@@ -45,7 +39,7 @@ const drawPlayer = (numeroPlayer, color) => {
 const drawBallon = () => {
     ctx.beginPath();
     ctx.fillStyle = "white";
-    ctx.arc(terrain.positionStartBallon().x, terrain.positionStartBallon().y, VariableGlobal.ballon.RAYONBALLON, 0, 2 * Math.PI);
+    ctx.arc(initialisation.positionStartBallon().x, initialisation.positionStartBallon().y, VariableGlobal.ballon.RAYONBALLON, 0, 2 * Math.PI);
     ctx.fill();
 };
 // représentation des angles
@@ -55,19 +49,19 @@ const drawAngleJoueur1 = () => {
     ctx.moveTo(Players[0].getPosition().x, Players[0].getPosition().y);
     // Calculer avec l'angle
     ctx.lineTo(Players[0].getPosition().x +
-        VariableGlobal.player.RAYONPLAYER * Math.cos(Players[0].getAngle()), Players[0].getPosition().y +
-        VariableGlobal.player.RAYONPLAYER * Math.sin(Players[0].getAngle()));
+        VariableGlobal.player.RAYONPLAYER * Math.cos(Players[0].angle), Players[0].getPosition().y +
+        VariableGlobal.player.RAYONPLAYER * Math.sin(Players[0].angle));
     ctx.stroke();
 };
 // draw all
 drawTerrain();
 drawPlayer(1, "blue");
 drawAngleJoueur1();
-drawPlayer(2, "blue");
-drawPlayer(3, "blue");
-drawPlayer(4, "yellow");
-drawPlayer(5, "yellow");
-drawPlayer(6, "yellow");
+//drawPlayer(2, "blue");
+//drawPlayer(3, "blue");
+drawPlayer(2, "yellow");
+//drawPlayer(5, "yellow");
+//drawPlayer(6, "yellow");
 drawBallon();
 // button test anim
 const buttonTestAnim = document.querySelector("#testAnim");
@@ -80,7 +74,13 @@ const lancerAnimation = () => {
     // on redessine le fond en vert
     ctx.fillStyle = "green";
     ctx.fillRect(Players[0].getPosition().x - VariableGlobal.player.RAYONPLAYER, Players[0].getPosition().y - VariableGlobal.player.RAYONPLAYER, VariableGlobal.player.RAYONPLAYER * 2, VariableGlobal.player.RAYONPLAYER * 2);
+    ctx.clearRect(Players[1].getPosition().x - VariableGlobal.player.RAYONPLAYER, Players[1].getPosition().y - VariableGlobal.player.RAYONPLAYER, VariableGlobal.player.RAYONPLAYER * 2, VariableGlobal.player.RAYONPLAYER * 2);
+    // on redessine le fond en vert
+    ctx.fillStyle = "green";
+    ctx.fillRect(Players[1].getPosition().x - VariableGlobal.player.RAYONPLAYER, Players[1].getPosition().y - VariableGlobal.player.RAYONPLAYER, VariableGlobal.player.RAYONPLAYER * 2, VariableGlobal.player.RAYONPLAYER * 2);
     // on redessine le player 1 en bleu avec un nouvelle avancer
-    Players[0].avancer();
+    game.avancerTousLesJoueurs();
     drawPlayer(1, "blue");
+    drawPlayer(2, "yellow");
+    game.IscollisionEntreJouer();
 };

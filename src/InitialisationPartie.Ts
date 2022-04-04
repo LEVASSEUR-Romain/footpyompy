@@ -1,6 +1,6 @@
 import { Position, Rectangle } from "./Interface";
 import VariableGlobal from "./VariableGlobal.js";
-export default class Terrain {
+export default class InitialisationPartie {
   width: number;
   height: number;
   border: number;
@@ -13,30 +13,30 @@ export default class Terrain {
 
   public dimensionGoalPlayer1(): Rectangle {
     return {
-      x: this.getBorder() / 2,
+      x: this.border / 2,
       y:
         this.height / 2 - (this.width * (this.POURCENTAGEGLOBALGOAL / 100)) / 2,
-      w: this.getBorder() / 2,
+      w: this.border / 2,
       h: this.width * (this.POURCENTAGEGLOBALGOAL / 100),
     };
   }
 
   public dimensionGoalPlayer2(): Rectangle {
     return {
-      x: this.width - this.getBorder(),
+      x: this.width - this.border,
       y:
         this.height / 2 - (this.width * (this.POURCENTAGEGLOBALGOAL / 100)) / 2,
-      w: this.getBorder() / 2,
+      w: this.border / 2,
       h: this.width * (this.POURCENTAGEGLOBALGOAL / 100),
     };
   }
 
   public dimensionBorder(): Rectangle {
     return {
-      x: this.getBorder(),
-      y: this.getBorder(),
-      w: this.getWidth() - this.getBorder() * 2,
-      h: this.getHeight() - this.getBorder() * 2,
+      x: this.border,
+      y: this.border,
+      w: this.width - this.border * 2,
+      h: this.height - this.border * 2,
     };
   }
 
@@ -94,24 +94,5 @@ export default class Terrain {
       x: this.width / 2,
       y: this.height / 2,
     };
-  }
-  //getter setter
-  public getWidth(): number {
-    return this.width;
-  }
-  public setWidth(whitdh: number): void {
-    this.width = whitdh;
-  }
-  public getHeight(): number {
-    return this.height;
-  }
-  public setHeight(height: number): void {
-    this.height = height;
-  }
-  public getBorder(): number {
-    return this.border;
-  }
-  public setBorder(border: number): void {
-    this.border = border;
   }
 }
