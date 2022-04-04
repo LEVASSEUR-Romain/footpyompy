@@ -53,12 +53,12 @@ export default class Game {
       player.Position.x + this.rayonPlayer >=
       VariableGlobal.terrain.width - VariableGlobal.terrain.border
     ) {
-      player.angle = player.angle + Math.PI;
+      player.angle = Math.PI - player.angle;
     } else if (
       player.Position.x - this.rayonPlayer <=
       VariableGlobal.terrain.border
     ) {
-      player.angle = player.angle + Math.PI;
+      player.angle = Math.PI - player.angle;
     } else if (
       player.Position.y - this.rayonPlayer <=
       VariableGlobal.terrain.border
