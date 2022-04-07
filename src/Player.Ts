@@ -5,11 +5,15 @@ export default class Player {
   player: number;
   angle: number;
   speed: number;
+  masse: number;
+  color: string;
   RAYONPLAYER: number = VariableGlobal.player.RAYONPLAYER;
-  constructor(numberPlayer: number) {
-    this.angle = Math.PI / 4;
+  constructor(numberPlayer: number, color: string) {
+    this.angle = 0;
     this.speed = 0;
     this.player = numberPlayer;
+    this.masse = VariableGlobal.player.masse;
+    this.color = color;
   }
 
   //getter setter
@@ -19,5 +23,8 @@ export default class Player {
   public setPosition(x: number, y: number): void {
     this.Position.x = x;
     this.Position.y = y;
+  }
+  public setAngle(angle: number): void {
+    this.angle = angle;
   }
 }

@@ -1,31 +1,28 @@
 import VariableGlobal from "./VariableGlobal.js";
+import collision from "./collision.js";
+import { distanceEntreObjet } from "./outilsMath.js";
 export default class Game {
     constructor(tableauDeJoueur) {
         this.tableauJoueur = [];
-        this.positionJoueur = [];
         this.rayonPlayer = VariableGlobal.player.RAYONPLAYER;
         this.tableauJoueur = tableauDeJoueur;
     }
     // AVANCER LES JOUEURS
     avancer(player) {
-        player.Position.x =
-            player.Position.x + this.rayonPlayer * Math.cos(player.angle);
-        player.Position.y =
-            player.Position.y + this.rayonPlayer * Math.sin(player.angle);
+        // A coriggé le 2
+        player.Position.x = player.Position.x + 2 * Math.cos(player.angle);
+        player.Position.y = player.Position.y + 2 * Math.sin(player.angle);
         if (this.iScollisionBordure(player)) {
             this.changementAngle(player);
             this.collisionBordurePosition(player);
         }
+        this.collisionEntreJouer();
     }
     avancerTousLesJoueurs() {
         for (let i = 0; i < this.tableauJoueur.length; i++) {
-            this.avancer(this.tableauJoueur[i]);
-        }
-        this.mettreAJourPosition();
-    }
-    mettreAJourPosition() {
-        for (let i = 0; i < this.tableauJoueur.length; i++) {
-            this.positionJoueur.push(this.tableauJoueur[i].getPosition());
+            if (this.tableauJoueur[i].speed !== 0) {
+                this.avancer(this.tableauJoueur[i]);
+            }
         }
     }
     //colision avec le border
@@ -83,27 +80,42 @@ export default class Game {
         }
     }
     // collisison entre joueur
-    IscollisionEntreJouer() {
-        this.mettreAJourPosition();
+    collisionEntreJouer() {
         for (let i = 0; i < this.tableauJoueur.length; i++) {
-            this.IsplayerCollision(this.tableauJoueur[i]);
+            this.IsplayerCollision(this.tableauJoueur[i], i);
         }
     }
-    IsplayerCollision(player) {
-        for (let i = 0; i < this.tableauJoueur.length; i++) {
+    IsplayerCollision(player, avancement) {
+        for (let i = avancement; i < this.tableauJoueur.length; i++) {
             if (this.tableauJoueur[i] != player) {
-                if (player.getPosition().x <=
-                    this.tableauJoueur[i].getPosition().x + this.rayonPlayer &&
-                    player.getPosition().x + this.rayonPlayer >
-                        this.tableauJoueur[i].getPosition().x &&
-                    player.getPosition().y <=
-                        this.tableauJoueur[i].getPosition().y + this.rayonPlayer &&
-                    player.getPosition().y + this.rayonPlayer >=
-                        this.tableauJoueur[i].getPosition().y) {
-                    return true;
+                if (player.Position.x - this.rayonPlayer <=
+                    this.tableauJoueur[i].Position.x + this.rayonPlayer &&
+                    player.Position.x + this.rayonPlayer >
+                        this.tableauJoueur[i].Position.x - this.rayonPlayer &&
+                    player.Position.y - this.rayonPlayer <=
+                        this.tableauJoueur[i].Position.y + this.rayonPlayer &&
+                    player.Position.y + this.rayonPlayer >=
+                        this.tableauJoueur[i].Position.y - this.rayonPlayer) {
+                    const distance = distanceEntreObjet(player.Position, this.tableauJoueur[i].Position);
+                    if (distance <= this.rayonPlayer * 2) {
+                        const distanceDeCollision = this.rayonPlayer * 2 - distance;
+                        player.Position.x =
+                            player.Position.x -
+                                (distanceDeCollision * Math.cos(player.angle)) / 2;
+                        player.Position.y =
+                            player.Position.y -
+                                (distanceDeCollision * Math.sin(player.angle)) / 2;
+                        this.tableauJoueur[i].Position.x =
+                            this.tableauJoueur[i].Position.x -
+                                (distanceDeCollision * Math.cos(this.tableauJoueur[i].angle)) / 2;
+                        this.tableauJoueur[i].Position.y =
+                            this.tableauJoueur[i].Position.y -
+                                (distanceDeCollision * Math.sin(this.tableauJoueur[i].angle)) / 2;
+                        // voir fichier collision.Ts
+                        collision(player, this.tableauJoueur[i]);
+                    }
                 }
             }
         }
-        return false;
     }
 }

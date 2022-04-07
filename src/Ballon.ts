@@ -1,3 +1,1 @@
-export default class Ballon {
-  constructor() {}
-}
+export default class Ballon {}
