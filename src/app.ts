@@ -6,21 +6,39 @@ import Game from "./Game.js";
 import Dessin from "./Dessin.js";
 import { hypothenusBlockMaxSpeed } from "./outilsMath.js";
 //players
-const Players = [new Player(1, "blue"), new Player(4, "red")];
+const Players = [
+  new Player(1, "blue"),
+  new Player(2, "blue"),
+  new Player(3, "blue"),
+  new Player(4, "red"),
+  new Player(5, "red"),
+  new Player(6, "red"),
+];
 const game = new Game(Players);
 
 // terrain border
 const initialisation = new InitialisationPartie();
 //position depart
 for (let i = 0; i < Players.length; i++) {
-  Players[i].setPosition(
+  Players[i].setPositionAndPreview(
     initialisation.positionPlayerStart(Players[i].player).x,
     initialisation.positionPlayerStart(Players[i].player).y
   );
 }
-// Pour les test
-Players[1].Position.x = 300;
+// pour les test
 
+Players[0].speed = 3;
+Players[0].setAngle(Math.PI / 4);
+Players[1].speed = 3;
+Players[1].setAngle(0);
+Players[2].speed = 3;
+Players[2].setAngle(-Math.PI / 4);
+Players[3].speed = 3;
+Players[3].setAngle(Math.PI / 4 + Math.PI / 2);
+Players[4].speed = 3;
+Players[4].setAngle(Math.PI);
+Players[5].speed = 3;
+Players[5].setAngle(-Math.PI / 4 - Math.PI / 2);
 // ballon
 const ballon = new Ballon();
 //dessin
@@ -84,9 +102,23 @@ const saveAnglePlayerAndSpeed = (
   // restart nouveau click
   canvas.addEventListener("click", ecouteurClickJoueur);
 };
-
+let interval: number;
 const lancerAnimation = (): void => {
-  dessin.effacerCanvas();
-  game.avancerTousLesJoueurs();
-  dessin.refreshCanvas();
+  // on rapelle la function
+  interval = setInterval(() => {
+    goAnimation();
+  }, 50);
+};
+
+const goAnimation = () => {
+  if (!game.isAnimationfinish()) {
+    dessin.effacerCanvas();
+    game.avancerTousLesJoueurs();
+    dessin.refreshCanvas();
+  } else {
+    clearInterval(interval);
+    dessin.effacerCanvas();
+    dessin.refreshCanvas();
+    game.refrechAngleSpeed();
+  }
 };

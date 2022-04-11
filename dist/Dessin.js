@@ -19,15 +19,22 @@ export default class Dessin {
             for (let i = 0; i < this.Players.length; i++) {
                 this.ctx.beginPath();
                 this.ctx.fillStyle = this.Players[i].color;
-                this.ctx.arc(this.Players[i].getPosition().x, this.Players[i].getPosition().y, VariableGlobal.player.RAYONPLAYER, 0, Math.PI * 2);
+                this.ctx.arc(this.Players[i].getPosition().x, this.Players[i].getPosition().y, VariableGlobal.player.RAYONPLAYER -
+                    VariableGlobal.player.rayonPlayerDessinerFaux, 0, Math.PI * 2);
                 this.ctx.fill();
             }
         };
         this.drawBallon = () => {
-            this.ctx.beginPath();
+            /*     this.ctx.beginPath();
             this.ctx.fillStyle = "white";
-            this.ctx.arc(this.InitialisationPartie.positionStartBallon().x, this.InitialisationPartie.positionStartBallon().y, VariableGlobal.ballon.RAYONBALLON, 0, 2 * Math.PI);
-            this.ctx.fill();
+            this.ctx.arc(
+              this.InitialisationPartie.positionStartBallon().x,
+              this.InitialisationPartie.positionStartBallon().y,
+              VariableGlobal.ballon.RAYONBALLON,
+              0,
+              2 * Math.PI
+            );
+            this.ctx.fill(); */
         };
         this.drawAngleJoueur = (x, y, player) => {
             if (player.speed !== 0) {
@@ -38,17 +45,17 @@ export default class Dessin {
                 this.ctx.beginPath();
                 this.ctx.fillStyle = "black";
                 this.ctx.moveTo(player.Position.x, player.Position.y);
+                // vitesse max proportionnelle a au rayon du joueur
+                const maxSpeedRayon = VariableGlobal.player.maxSpeed * VariableGlobal.player.RAYONPLAYER;
                 const hypothenus = Math.pow((Math.pow((x - player.Position.x), 2) + Math.pow((y - player.Position.y), 2)), 0.5);
-                if (hypothenus <= VariableGlobal.player.maxSpeed) {
+                if (hypothenus <= maxSpeedRayon) {
                     this.ctx.lineTo(x, y);
                     this.ctx.stroke();
                 }
                 else {
                     this.ctx.lineTo(player.Position.x +
-                        ((x - player.Position.x) * VariableGlobal.player.maxSpeed) /
-                            hypothenus, player.Position.y +
-                        ((y - player.Position.y) * VariableGlobal.player.maxSpeed) /
-                            hypothenus);
+                        ((x - player.Position.x) * maxSpeedRayon) / hypothenus, player.Position.y +
+                        ((y - player.Position.y) * maxSpeedRayon) / hypothenus);
                     this.ctx.stroke();
                 }
             }
@@ -60,8 +67,12 @@ export default class Dessin {
                     this.ctx.fillStyle = "black";
                     this.ctx.moveTo(this.Players[i].Position.x, this.Players[i].Position.y);
                     this.ctx.lineTo(this.Players[i].Position.x +
-                        this.Players[i].speed * Math.cos(this.Players[i].angle), this.Players[i].Position.y +
-                        this.Players[i].speed * Math.sin(this.Players[i].angle));
+                        this.Players[i].speed *
+                            VariableGlobal.player.RAYONPLAYER *
+                            Math.cos(this.Players[i].angle), this.Players[i].Position.y +
+                        this.Players[i].speed *
+                            VariableGlobal.player.RAYONPLAYER *
+                            Math.sin(this.Players[i].angle));
                     this.ctx.stroke();
                 }
             }

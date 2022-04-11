@@ -1,6 +1,10 @@
 import Player from "./Player";
 import VariableGlobal from "./VariableGlobal.js";
-import { playerMaxSpeed, playerMinSpeed } from "./outilsMath.js";
+import {
+  playerMaxSpeed,
+  playerMinSpeed,
+  isDroiteIntesection,
+} from "./outilsMath.js";
 
 const collision = (Player1: Player, Player2: Player): void => {
   // Collision avec un player static
@@ -41,16 +45,26 @@ const collision = (Player1: Player, Player2: Player): void => {
       Math.abs(Player1.Position.y - Player2.Position.y) <=
         VariableGlobal.mouvement.ecartY
     ) {
+      // chox frontal vecteur oposé
+      if (!isDroiteIntesection(Player1, Player2)) {
+        Player1.angle = Player1.angle + Math.PI;
+        Player2.angle = Player2.angle + Math.PI;
+      } else {
+        Player1.angle =
+          Player1.angle > 0
+            ? Player1.angle - VariableGlobal.mouvement.angleColinaire
+            : Player1.angle + VariableGlobal.mouvement.angleColinaire;
+        Player2.angle =
+          Player2.angle > 0
+            ? Player2.angle - VariableGlobal.mouvement.angleColinaire
+            : Player2.angle + VariableGlobal.mouvement.angleColinaire;
+      }
       const speedMoyenne = (Player1.speed + Player2.speed) / 2;
       Player1.speed = speedMoyenne;
       Player2.speed = speedMoyenne;
-      Player1.angle = Player1.angle + Math.PI;
-      Player2.angle = Player2.angle + Math.PI;
-      // on ne change pas la speed
     }
     // 2 cas choc latéral
     else {
-      console.log("choc latéral");
       // moyenne des speed entre les deux boules
       const speedMoyenne = (Player1.speed + Player2.speed) / 2;
       Player2.speed = speedMoyenne;

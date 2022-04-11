@@ -1,26 +1,39 @@
 import VariableGlobal from "./VariableGlobal.js";
-import collision from "./collision.js";
 import { distanceEntreObjet } from "./outilsMath.js";
+import collisionPyompy from "./collisionPyompy.js";
 export default class Game {
     constructor(tableauDeJoueur) {
         this.tableauJoueur = [];
         this.rayonPlayer = VariableGlobal.player.RAYONPLAYER;
         this.tableauJoueur = tableauDeJoueur;
+        this.nombreAnimationJouer = VariableGlobal.mouvement.nombreAnimationJouer;
     }
     // AVANCER LES JOUEURS
     avancer(player) {
-        // A coriggé le 2
-        player.Position.x = player.Position.x + 2 * Math.cos(player.angle);
-        player.Position.y = player.Position.y + 2 * Math.sin(player.angle);
+        // on remet les collision a false il est modifier dans gestionCollision
+        player.collision = false;
+        const avancement = (player.speed / VariableGlobal.player.maxSpeed) *
+            VariableGlobal.player.maxPxAvancement;
+        const avancementX = player.Position.x + avancement * Math.cos(player.angle);
+        const avancementY = player.Position.y + avancement * Math.sin(player.angle);
+        // position du joueur preview
+        player.PositionPreview.x = avancementX;
+        player.PositionPreview.y = avancementY;
+        this.collisionEntreJouer();
+        if (!player.collision) {
+            player.Position.x = avancementX;
+            player.Position.y = avancementY;
+        }
+        this.lawSpeed(player);
         if (this.iScollisionBordure(player)) {
             this.changementAngle(player);
             this.collisionBordurePosition(player);
         }
-        this.collisionEntreJouer();
     }
     avancerTousLesJoueurs() {
+        this.nombreAnimationJouer = this.nombreAnimationJouer - 1;
         for (let i = 0; i < this.tableauJoueur.length; i++) {
-            if (this.tableauJoueur[i].speed !== 0) {
+            if (this.tableauJoueur[i].speed > 0) {
                 this.avancer(this.tableauJoueur[i]);
             }
         }
@@ -87,35 +100,52 @@ export default class Game {
     }
     IsplayerCollision(player, avancement) {
         for (let i = avancement; i < this.tableauJoueur.length; i++) {
-            if (this.tableauJoueur[i] != player) {
-                if (player.Position.x - this.rayonPlayer <=
-                    this.tableauJoueur[i].Position.x + this.rayonPlayer &&
-                    player.Position.x + this.rayonPlayer >
-                        this.tableauJoueur[i].Position.x - this.rayonPlayer &&
-                    player.Position.y - this.rayonPlayer <=
-                        this.tableauJoueur[i].Position.y + this.rayonPlayer &&
-                    player.Position.y + this.rayonPlayer >=
-                        this.tableauJoueur[i].Position.y - this.rayonPlayer) {
-                    const distance = distanceEntreObjet(player.Position, this.tableauJoueur[i].Position);
+            if (this.tableauJoueur[i].player !== player.player) {
+                if (this.isCollisionInCarre(player, this.tableauJoueur[i])) {
+                    const distance = distanceEntreObjet(player.PositionPreview, this.tableauJoueur[i].PositionPreview);
                     if (distance <= this.rayonPlayer * 2) {
-                        const distanceDeCollision = this.rayonPlayer * 2 - distance;
-                        player.Position.x =
-                            player.Position.x -
-                                (distanceDeCollision * Math.cos(player.angle)) / 2;
-                        player.Position.y =
-                            player.Position.y -
-                                (distanceDeCollision * Math.sin(player.angle)) / 2;
-                        this.tableauJoueur[i].Position.x =
-                            this.tableauJoueur[i].Position.x -
-                                (distanceDeCollision * Math.cos(this.tableauJoueur[i].angle)) / 2;
-                        this.tableauJoueur[i].Position.y =
-                            this.tableauJoueur[i].Position.y -
-                                (distanceDeCollision * Math.sin(this.tableauJoueur[i].angle)) / 2;
-                        // voir fichier collision.Ts
-                        collision(player, this.tableauJoueur[i]);
+                        //gestionCollision(player, this.tableauJoueur[i]);
+                        //collision(player, this.tableauJoueur[i]);
+                        collisionPyompy(player, this.tableauJoueur[i]);
                     }
                 }
             }
+        }
+    }
+    isCollisionInCarre(player1, player2) {
+        if (player1.PositionPreview.x - this.rayonPlayer <=
+            player2.PositionPreview.x + this.rayonPlayer &&
+            player1.PositionPreview.x + this.rayonPlayer >
+                player2.PositionPreview.x - this.rayonPlayer &&
+            player1.PositionPreview.y - this.rayonPlayer <=
+                player2.PositionPreview.y + this.rayonPlayer &&
+            player1.PositionPreview.y + this.rayonPlayer >=
+                player2.PositionPreview.y - this.rayonPlayer) {
+            return true;
+        }
+        return false;
+    }
+    lawSpeed(player) {
+        const ratioAnimation = this.nombreAnimationJouer / VariableGlobal.mouvement.nombreAnimationJouer;
+        if (player.speed < VariableGlobal.mouvement.velociteMin) {
+            player.speed = 0;
+        }
+        else {
+            player.speed = player.speed * ratioAnimation;
+        }
+    }
+    isAnimationfinish() {
+        for (let i = 0; i < this.tableauJoueur.length; i++) {
+            if (this.tableauJoueur[i].speed > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    refrechAngleSpeed() {
+        for (let i = 0; i < this.tableauJoueur.length; i++) {
+            this.tableauJoueur[i].angle = 0;
+            this.tableauJoueur[i].speed = 0;
         }
     }
 }
