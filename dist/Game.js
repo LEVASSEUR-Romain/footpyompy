@@ -1,6 +1,6 @@
 import VariableGlobal from "./VariableGlobal.js";
 import { distanceEntreObjet } from "./outilsMath.js";
-import collisionPyompy from "./collisionPyompy.js";
+import gestionCollision from "./gestionCollision.js";
 export default class Game {
     constructor(tableauDeJoueur) {
         this.tableauJoueur = [];
@@ -104,9 +104,9 @@ export default class Game {
                 if (this.isCollisionInCarre(player, this.tableauJoueur[i])) {
                     const distance = distanceEntreObjet(player.PositionPreview, this.tableauJoueur[i].PositionPreview);
                     if (distance <= this.rayonPlayer * 2) {
-                        //gestionCollision(player, this.tableauJoueur[i]);
+                        gestionCollision(player, this.tableauJoueur[i]);
                         //collision(player, this.tableauJoueur[i]);
-                        collisionPyompy(player, this.tableauJoueur[i]);
+                        //collisionPyompy(player, this.tableauJoueur[i]);
                     }
                 }
             }

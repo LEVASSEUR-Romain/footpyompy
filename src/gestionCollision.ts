@@ -2,30 +2,14 @@ import Player from "./Player";
 import VariableGlobal from "./VariableGlobal.js";
 import { distanceEntreObjet, playerMaxSpeed } from "./outilsMath.js";
 const gestionCollision = (Player1: Player, Player2: Player): void => {
-  /*  const distance = distanceEntreObjet(
-    Player1.PositionPreview,
-    Player2.PositionPreview
-  );
-  if (distance <= VariableGlobal.mouvement.distanceMinimum) {
-    Player1.angle = Player1.angle + Math.PI;
-  } */
   const distance = distanceEntreObjet(
     Player1.PositionPreview,
     Player2.PositionPreview
   );
-  const dist_x = Player2.Position.x - Player1.Position.x;
-  const dist_y = Player2.Position.y - Player1.Position.y;
-  const c = dist_x / distance;
-  const s = dist_y / distance;
-  const dist_trigger = Player2.rayon + Player1.rayon;
-  const spread = dist_trigger - distance;
-  const ax = spread * c;
-  const ay = spread * s;
-
-  // reposition of circles
-  Player1.Position.x -= ax;
-  Player1.Position.y -= ay;
-
+  // decallage si trop collision
+  if (distance <= VariableGlobal.mouvement.distanceMinimum) {
+    Player1.angle = Player1.angle + Math.PI;
+  }
   const angle = Math.atan2(
     Player2.PositionPreview.y - Player1.PositionPreview.y,
     Player2.PositionPreview.x - Player1.PositionPreview.x

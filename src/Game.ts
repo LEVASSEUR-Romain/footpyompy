@@ -130,9 +130,9 @@ export default class Game {
             this.tableauJoueur[i].PositionPreview
           );
           if (distance <= this.rayonPlayer * 2) {
-            //gestionCollision(player, this.tableauJoueur[i]);
+            gestionCollision(player, this.tableauJoueur[i]);
             //collision(player, this.tableauJoueur[i]);
-            collisionPyompy(player, this.tableauJoueur[i]);
+            //collisionPyompy(player, this.tableauJoueur[i]);
           }
         }
       }
